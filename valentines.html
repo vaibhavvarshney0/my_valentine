@@ -1,0 +1,732 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>A Special Question For You 💕</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            min-height: 100vh;
+            background: linear-gradient(135deg, #ff6b9d 0%, #c44569 50%, #ff6b9d 100%);
+            font-family: 'Georgia', serif;
+            overflow-x: hidden;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+
+        /* Floating hearts background */
+        .hearts-container {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            pointer-events: none;
+            overflow: hidden;
+            z-index: 0;
+        }
+
+        .floating-heart {
+            position: absolute;
+            font-size: 20px;
+            animation: float-up 6s ease-in infinite;
+            opacity: 0.6;
+        }
+
+        @keyframes float-up {
+            0% {
+                transform: translateY(100vh) rotate(0deg);
+                opacity: 0;
+            }
+            10% {
+                opacity: 0.6;
+            }
+            90% {
+                opacity: 0.6;
+            }
+            100% {
+                transform: translateY(-100px) rotate(360deg);
+                opacity: 0;
+            }
+        }
+
+        .main-container {
+            position: relative;
+            z-index: 1;
+            text-align: center;
+            padding: 40px;
+        }
+
+        .card {
+            background: rgba(255, 255, 255, 0.95);
+            border-radius: 30px;
+            padding: 50px 60px;
+            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.2);
+            max-width: 500px;
+            transform: scale(0);
+            animation: pop-in 0.8s ease-out 0.5s forwards;
+        }
+
+        @keyframes pop-in {
+            0% {
+                transform: scale(0) rotate(-10deg);
+            }
+            60% {
+                transform: scale(1.1) rotate(2deg);
+            }
+            100% {
+                transform: scale(1) rotate(0deg);
+            }
+        }
+
+        .big-heart {
+            font-size: 80px;
+            animation: heartbeat 1s ease-in-out infinite;
+            display: inline-block;
+        }
+
+        @keyframes heartbeat {
+            0%, 100% {
+                transform: scale(1);
+            }
+            50% {
+                transform: scale(1.2);
+            }
+        }
+
+        h1 {
+            color: #c44569;
+            font-size: 2.5rem;
+            margin: 20px 0;
+            font-weight: normal;
+            font-style: italic;
+        }
+
+        .question {
+            font-size: 1.8rem;
+            color: #333;
+            margin: 30px 0;
+            line-height: 1.4;
+        }
+
+        .name {
+            color: #ff6b9d;
+            font-weight: bold;
+        }
+
+        .buttons {
+            display: flex;
+            justify-content: center;
+            gap: 30px;
+            margin-top: 40px;
+            flex-wrap: wrap;
+        }
+
+        .btn {
+            padding: 15px 50px;
+            font-size: 1.3rem;
+            border: none;
+            border-radius: 50px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            font-family: inherit;
+        }
+
+        .btn-yes {
+            background: linear-gradient(135deg, #ff6b9d, #c44569);
+            color: white;
+            box-shadow: 0 5px 20px rgba(196, 69, 105, 0.4);
+        }
+
+        .btn-yes:hover {
+            transform: scale(1.1);
+            box-shadow: 0 8px 30px rgba(196, 69, 105, 0.6);
+        }
+
+        .btn-no {
+            background: #ddd;
+            color: #666;
+        }
+
+        /* Celebration screen */
+        .celebration {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(135deg, #ff6b9d 0%, #ff8fab 50%, #ffc3d7 100%);
+            z-index: 100;
+            justify-content: center;
+            align-items: center;
+            flex-direction: column;
+        }
+
+        .celebration.active {
+            display: flex;
+            animation: fade-in 0.5s ease;
+        }
+
+        @keyframes fade-in {
+            from { opacity: 0; }
+            to { opacity: 1; }
+        }
+
+        .celebration h1 {
+            color: white;
+            font-size: 4rem;
+            text-shadow: 2px 2px 10px rgba(0,0,0,0.2);
+            animation: bounce 0.6s ease infinite alternate;
+        }
+
+        @keyframes bounce {
+            from { transform: translateY(0); }
+            to { transform: translateY(-20px); }
+        }
+
+        .celebration .hearts-burst {
+            font-size: 100px;
+            animation: spin-grow 1s ease;
+        }
+
+        @keyframes spin-grow {
+            0% {
+                transform: scale(0) rotate(0deg);
+            }
+            100% {
+                transform: scale(1) rotate(360deg);
+            }
+        }
+
+        .celebration p {
+            color: white;
+            font-size: 1.5rem;
+            margin-top: 20px;
+            font-style: italic;
+        }
+
+        /* Confetti */
+        .confetti {
+            position: fixed;
+            width: 10px;
+            height: 10px;
+            top: -10px;
+            animation: confetti-fall 3s ease-out forwards;
+        }
+
+        @keyframes confetti-fall {
+            0% {
+                transform: translateY(0) rotate(0deg);
+                opacity: 1;
+            }
+            100% {
+                transform: translateY(100vh) rotate(720deg);
+                opacity: 0;
+            }
+        }
+
+        /* Love letter animation */
+        .love-note {
+            margin-top: 20px;
+            padding: 20px;
+            background: linear-gradient(135deg, #fff5f7, #ffe0e8);
+            border-radius: 15px;
+            border: 2px dashed #ff6b9d;
+            font-style: italic;
+            color: #666;
+            line-height: 1.6;
+        }
+
+        .sparkle {
+            position: absolute;
+            font-size: 20px;
+            animation: sparkle 1.5s ease-in-out infinite;
+            pointer-events: none;
+        }
+
+        @keyframes sparkle {
+            0%, 100% { opacity: 0; transform: scale(0); }
+            50% { opacity: 1; transform: scale(1); }
+        }
+
+        /* Photo popup styles - Heart shaped */
+        .photo-popup {
+            position: fixed;
+            z-index: 2000;
+            animation: heart-pop 0.6s ease forwards;
+        }
+
+        .heart-wrapper {
+            position: relative;
+            display: inline-block;
+        }
+
+        .heart-container {
+            position: relative;
+            width: 320px;
+            height: 300px;
+            overflow: hidden;
+        }
+
+        /* Gradient border behind the heart */
+        .heart-border {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(135deg, #ff6b9d, #c44569, #ff8fab, #ff6b9d);
+            clip-path: path('M160 280 C160 280 10 180 10 100 C10 40 60 10 110 10 C140 10 160 30 160 50 C160 30 180 10 210 10 C260 10 310 40 310 100 C310 180 160 280 160 280 Z');
+            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+        }
+
+        /* Image fills the heart with padding for border effect */
+        .heart-container img {
+            position: absolute;
+            top: 10px;
+            left: 10px;
+            width: calc(100% - 20px);
+            height: calc(100% - 20px);
+            object-fit: cover;
+            clip-path: path('M150 262 C150 262 8 168 8 92 C8 36 54 8 100 8 C128 8 150 26 150 44 C150 26 172 8 200 8 C246 8 292 36 292 92 C292 168 150 262 150 262 Z');
+        }
+
+        /* Soft vignette/fade overlay on image edges */
+        .heart-vignette {
+            position: absolute;
+            top: 10px;
+            left: 10px;
+            width: calc(100% - 20px);
+            height: calc(100% - 20px);
+            clip-path: path('M150 262 C150 262 8 168 8 92 C8 36 54 8 100 8 C128 8 150 26 150 44 C150 26 172 8 200 8 C246 8 292 36 292 92 C292 168 150 262 150 262 Z');
+            box-shadow: inset 0 0 40px 20px rgba(196, 69, 105, 0.5);
+            pointer-events: none;
+        }
+
+        /* Thought bubble styles - positioned outside heart */
+        .thought-bubble {
+            position: absolute;
+            top: 30px;
+            left: 100%;
+            margin-left: 30px;
+            background: white;
+            border-radius: 25px;
+            padding: 18px 22px;
+            min-width: 160px;
+            max-width: 200px;
+            box-shadow: 0 8px 25px rgba(0, 0, 0, 0.15);
+            animation: bubble-pop 0.4s ease 0.3s both;
+            z-index: 10;
+        }
+
+        /* Thought bubble dots */
+        .thought-dot {
+            position: absolute;
+            background: white;
+            border-radius: 50%;
+            box-shadow: 0 3px 10px rgba(0, 0, 0, 0.1);
+        }
+
+        .thought-dot-1 {
+            width: 20px;
+            height: 20px;
+            left: -25px;
+            top: 50%;
+            transform: translateY(-50%);
+        }
+
+        .thought-dot-2 {
+            width: 12px;
+            height: 12px;
+            left: -45px;
+            top: 50%;
+            transform: translateY(-50%);
+        }
+
+        .thought-bubble .caption {
+            color: #c44569;
+            font-size: 1rem;
+            font-style: italic;
+            line-height: 1.4;
+            text-align: center;
+            margin: 0;
+        }
+
+        @keyframes bubble-pop {
+            0% {
+                transform: scale(0);
+                opacity: 0;
+            }
+            60% {
+                transform: scale(1.1);
+            }
+            100% {
+                transform: scale(1);
+                opacity: 1;
+            }
+        }
+
+        @keyframes heart-pop {
+            0% {
+                transform: scale(0) rotate(10deg);
+                opacity: 0;
+            }
+            50% {
+                transform: scale(1.1) rotate(-5deg);
+            }
+            100% {
+                transform: scale(1) rotate(0deg);
+                opacity: 1;
+            }
+        }
+
+        /* Buttons below heart */
+        .popup-buttons {
+            display: flex;
+            gap: 15px;
+            justify-content: center;
+            margin-top: 15px;
+        }
+
+        .popup-btn {
+            padding: 12px 30px;
+            font-size: 1rem;
+            border: none;
+            border-radius: 50px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            font-family: inherit;
+        }
+
+        .popup-btn-yes {
+            background: linear-gradient(135deg, #ff6b9d, #c44569);
+            color: white;
+            box-shadow: 0 5px 15px rgba(196, 69, 105, 0.4);
+        }
+
+        .popup-btn-yes:hover {
+            transform: scale(1.1);
+            box-shadow: 0 8px 25px rgba(196, 69, 105, 0.6);
+        }
+
+        .popup-btn-no {
+            background: #eee;
+            color: #666;
+        }
+
+        .overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.5);
+            z-index: 1999;
+            opacity: 0;
+            animation: fade-overlay 0.3s ease forwards;
+        }
+
+        @keyframes fade-overlay {
+            to { opacity: 1; }
+        }
+
+        /* Broken heart pieces floating away */
+        .broken-piece {
+            position: fixed;
+            font-size: 30px;
+            pointer-events: none;
+            z-index: 2001;
+            animation: float-away 1s ease-out forwards;
+        }
+
+        @keyframes float-away {
+            0% {
+                opacity: 1;
+                transform: scale(1);
+            }
+            100% {
+                opacity: 0;
+                transform: translateY(100px) rotate(45deg) scale(0.5);
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- Floating hearts background -->
+    <div class="hearts-container" id="heartsContainer"></div>
+
+    <!-- Main card -->
+    <div class="main-container">
+        <div class="card">
+            <div class="big-heart">💝</div>
+            <h1>My Dearest Love</h1>
+            <p class="question">
+                Will you be my <span class="name">Valentine</span>? 💕
+            </p>
+            <div class="love-note">
+                "Every moment with you is a gift. You make my heart smile every single day. I couldn't imagine spending this Valentine's Day with anyone else but you."
+            </div>
+            <div class="buttons">
+                <button class="btn btn-yes" onclick="sayYes()">Yes! 💖</button>
+                <button class="btn btn-no" id="noBtn">No 😢</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Celebration screen -->
+    <div class="celebration" id="celebration">
+        <div class="hearts-burst">💕💖💕</div>
+        <h1>Yaaay! 🎉</h1>
+        <p>I love you so much! This is going to be the best Valentine's Day ever!</p>
+        <p style="font-size: 3rem; margin-top: 30px;">😘💕🥰</p>
+    </div>
+
+    <script>
+        // Create floating hearts
+        function createFloatingHearts() {
+            const container = document.getElementById('heartsContainer');
+            const hearts = ['❤️', '💕', '💖', '💗', '💓', '💝', '💘', '🌹'];
+            
+            for (let i = 0; i < 20; i++) {
+                setTimeout(() => {
+                    const heart = document.createElement('div');
+                    heart.className = 'floating-heart';
+                    heart.textContent = hearts[Math.floor(Math.random() * hearts.length)];
+                    heart.style.left = Math.random() * 100 + '%';
+                    heart.style.animationDuration = (4 + Math.random() * 4) + 's';
+                    heart.style.animationDelay = Math.random() * 2 + 's';
+                    heart.style.fontSize = (15 + Math.random() * 20) + 'px';
+                    container.appendChild(heart);
+                    
+                    // Remove heart after animation
+                    setTimeout(() => heart.remove(), 10000);
+                }, i * 500);
+            }
+        }
+
+        // Keep creating hearts
+        createFloatingHearts();
+        setInterval(createFloatingHearts, 8000);
+
+        // Yes button celebration
+        function sayYes() {
+            document.getElementById('celebration').classList.add('active');
+            createConfetti();
+            
+            // Create lots of floating hearts
+            for (let i = 0; i < 50; i++) {
+                setTimeout(createConfetti, i * 100);
+            }
+        }
+
+        // Create confetti
+        function createConfetti() {
+            const colors = ['#ff6b9d', '#ff8fab', '#ffc3d7', '#c44569', '#ff4d6d', '#ffb3c6', '#gold'];
+            
+            for (let i = 0; i < 10; i++) {
+                const confetti = document.createElement('div');
+                confetti.className = 'confetti';
+                confetti.style.left = Math.random() * 100 + '%';
+                confetti.style.backgroundColor = colors[Math.floor(Math.random() * colors.length)];
+                confetti.style.borderRadius = Math.random() > 0.5 ? '50%' : '0';
+                confetti.style.width = (5 + Math.random() * 10) + 'px';
+                confetti.style.height = (5 + Math.random() * 10) + 'px';
+                confetti.style.animationDuration = (2 + Math.random() * 2) + 's';
+                document.body.appendChild(confetti);
+                
+                setTimeout(() => confetti.remove(), 4000);
+            }
+        }
+
+        // Make the "No" button show photo popups!
+        
+        // Photo captions - add your own captions here!
+        const photoCaptions = [
+            "Remember this moment? 💕",
+            "Look how happy we are! 🥰",
+            "We're perfect together! 💖",
+            "How can you say no to us? 😢",
+            "Our love story is beautiful! 💝",
+            "You really want to miss more moments like this? 🥺",
+            "We belong together! 💑",
+            "Say yes and make more memories! 📸"
+        ];
+
+        const funnyTexts = [
+            "No 😢",
+            "Are you sure? 🥺",
+            "Think again! 💕",
+            "Pretty please? 🙏",
+            "I'll be sad 😢",
+            "One more chance? 💖",
+            "You can't catch me! 😜",
+            "Look at our photos! 📸"
+        ];
+
+        let photoClickCount = 0;
+
+        // Function to get random position for popup
+        function getRandomPosition(elementWidth, elementHeight) {
+            const padding = 50;
+            const maxX = window.innerWidth - elementWidth - padding;
+            const maxY = window.innerHeight - elementHeight - padding;
+            
+            return {
+                x: Math.max(padding, Math.random() * maxX),
+                y: Math.max(padding, Math.random() * maxY)
+            };
+        }
+
+        // Create broken heart pieces effect
+        function createBrokenHeartPieces(x, y) {
+            const pieces = ['💔', '❤️‍🩹', '🖤', '💜', '💙'];
+            for (let i = 0; i < 8; i++) {
+                const piece = document.createElement('div');
+                piece.className = 'broken-piece';
+                piece.textContent = pieces[Math.floor(Math.random() * pieces.length)];
+                piece.style.left = (x + Math.random() * 200 - 100) + 'px';
+                piece.style.top = (y + Math.random() * 200 - 100) + 'px';
+                document.body.appendChild(piece);
+                
+                setTimeout(() => piece.remove(), 1000);
+            }
+        }
+
+        // Function to show photo popup at random position
+        function showPhotoPopup() {
+            // Remove any existing popup (without animation if it's the first one)
+            const existingPopup = document.querySelector('.photo-popup');
+            const existingOverlay = document.querySelector('.overlay');
+            if (existingPopup) existingPopup.remove();
+            if (existingOverlay) existingOverlay.remove();
+
+            // Create overlay
+            const overlay = document.createElement('div');
+            overlay.className = 'overlay';
+            document.body.appendChild(overlay);
+
+            // Create popup
+            const popup = document.createElement('div');
+            popup.className = 'photo-popup';
+            
+            // Cycle through photos (photo1.jpg, photo2.jpg, etc.)
+            const photoIndex = (photoClickCount % 8) + 1;
+            
+            popup.innerHTML = `
+                <div class="heart-wrapper">
+                    <div class="heart-container">
+                        <div class="heart-border"></div>
+                        <img src="photos/photo${photoIndex}.jpg" alt="Our memory" onerror="this.src='https://placehold.co/300x280/ff6b9d/white?text=photo${photoIndex}+💕'">
+                        <div class="heart-vignette"></div>
+                    </div>
+                    <div class="thought-bubble">
+                        <div class="thought-dot thought-dot-1"></div>
+                        <div class="thought-dot thought-dot-2"></div>
+                        <div class="caption">${photoCaptions[photoClickCount % photoCaptions.length]}</div>
+                    </div>
+                </div>
+                <div class="popup-buttons">
+                    <button class="popup-btn popup-btn-yes" onclick="sayYes()">Yes! 💖</button>
+                    <button class="popup-btn popup-btn-no">${funnyTexts[photoClickCount % funnyTexts.length]}</button>
+                </div>
+            `;
+            
+            document.body.appendChild(popup);
+            
+            // Position popup randomly after it's added to DOM (account for thought bubble)
+            const pos = getRandomPosition(500, 380);
+            popup.style.left = pos.x + 'px';
+            popup.style.top = pos.y + 'px';
+            
+            // Add hover/click event to the No button inside popup
+            const popupNoBtn = popup.querySelector('.popup-btn-no');
+            popupNoBtn.addEventListener('click', handlePopupNo);
+            popupNoBtn.addEventListener('mouseenter', handlePopupNo);
+            popupNoBtn.addEventListener('touchstart', function(e) {
+                e.preventDefault();
+                handlePopupNo();
+            });
+        }
+
+        // Handle No button click/hover in popup - break heart and show next
+        function handlePopupNo() {
+            const popup = document.querySelector('.photo-popup');
+            if (!popup) return;
+            
+            // Get popup position for broken pieces effect
+            const rect = popup.getBoundingClientRect();
+            createBrokenHeartPieces(rect.left + rect.width/2, rect.top + rect.height/2);
+            
+            // Add shake and fade out animation
+            popup.style.animation = 'none';
+            popup.style.transition = 'all 0.5s ease';
+            popup.style.transform = 'scale(0.8) rotate(10deg)';
+            popup.style.opacity = '0';
+            
+            photoClickCount++;
+            
+            // Show new popup after animation
+            setTimeout(() => {
+                showPhotoPopup();
+            }, 500);
+        }
+
+        // Function to close photo popup
+        function closePhotoPopup() {
+            const popup = document.querySelector('.photo-popup');
+            const overlay = document.querySelector('.overlay');
+            if (popup) popup.remove();
+            if (overlay) overlay.remove();
+        }
+
+        // Initial No button behavior - just shows the first popup
+        const noBtn = document.getElementById('noBtn');
+        
+        noBtn.addEventListener('mouseenter', function(e) {
+            // Hide the original card's No button by moving it away
+            this.style.position = 'fixed';
+            this.style.left = '-1000px';
+            this.style.top = '-1000px';
+            
+            // Show the photo popup
+            showPhotoPopup();
+        });
+
+        noBtn.addEventListener('click', function(e) {
+            this.style.position = 'fixed';
+            this.style.left = '-1000px';
+            this.style.top = '-1000px';
+            showPhotoPopup();
+        });
+
+        // Mobile touch support
+        noBtn.addEventListener('touchstart', function(e) {
+            e.preventDefault();
+            const event = new Event('mouseenter');
+            this.dispatchEvent(event);
+        });
+
+        // Add sparkles on mouse move
+        document.addEventListener('mousemove', function(e) {
+            if (Math.random() > 0.95) {
+                const sparkle = document.createElement('div');
+                sparkle.className = 'sparkle';
+                sparkle.textContent = '✨';
+                sparkle.style.left = e.pageX + 'px';
+                sparkle.style.top = e.pageY + 'px';
+                document.body.appendChild(sparkle);
+                
+                setTimeout(() => sparkle.remove(), 1500);
+            }
+        });
+    </script>
+</body>
+</html>

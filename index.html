@@ -1,0 +1,105 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>For Tanisha 💕</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,600;1,400&family=Quicksand:wght@300;400;500;600&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+    <!-- Background Music -->
+    <audio id="backgroundMusic" loop autoplay>
+        <source src="music.mp3" type="audio/mpeg">
+        Your browser does not support the audio element.
+    </audio>
+
+    <!-- Envelope Intro -->
+    <div id="envelope-intro" class="envelope-intro active">
+        <div class="envelope-container">
+            <div class="envelope" id="envelope">
+                <div class="envelope-back"></div>
+                <div class="envelope-letter" id="envelopeLetter">
+                    <div class="letter-content">
+                        <span class="letter-heart">💌</span>
+                        <p>You've got mail!</p>
+                    </div>
+                </div>
+                <div class="envelope-front"></div>
+                <div class="envelope-flap" id="envelopeFlap"></div>
+            </div>
+            <p class="tap-hint" id="tapHint">Tap to open 💕</p>
+        </div>
+    </div>
+
+    <!-- Page 1: Conversation Quiz -->
+    <div id="quiz-page" class="page">
+        <div class="floating-hearts" id="quizHearts"></div>
+        
+        <div class="quiz-container">
+            <div class="quiz-header">
+                <div class="heart-icon">💝</div>
+                <h1>Hey Buddhu!</h1>
+                <p class="subtitle">I have a few questions for you...</p>
+            </div>
+
+            <div class="chat-container" id="chatContainer">
+                <!-- Messages will be added here dynamically -->
+            </div>
+
+            <div class="input-area" id="inputArea">
+                <!-- Options or input will appear here -->
+            </div>
+        </div>
+    </div>
+
+    <!-- Page 2: Valentine's Proposal -->
+    <div id="proposal-page" class="page">
+        <div class="hearts-container" id="heartsContainer"></div>
+
+        <div class="main-container">
+            <div class="card">
+                <div class="big-heart">💝</div>
+                <h1>My Dearest Tanisha</h1>
+                <p class="question">
+                    Will you be my <span class="name">Valentine</span>? 💕
+                </p>
+                <div class="love-note">
+                    "Every moment with you is a gift, Buddhu. You make my heart smile every single day. I couldn't imagine spending this Valentine's Day with anyone else but you."
+                </div>
+                <div class="buttons">
+                    <button class="btn btn-yes" onclick="sayYes()">Yes! 💖</button>
+                    <button class="btn btn-no" id="noBtn">No 😢</button>
+                </div>
+            </div>
+        </div>
+
+        <!-- Celebration screen -->
+        <div class="celebration" id="celebration">
+            <div class="hearts-burst">💕💖💕</div>
+            <h1>Yaaay! 🎉</h1>
+            <p>I love you so much, Buddhu! This is going to be the best Valentine's Day ever!</p>
+            <p style="font-size: 3rem; margin-top: 30px;">😘💕🥰</p>
+        </div>
+    </div>
+
+    <script src="quiz.js"></script>
+    <script src="proposal.js"></script>
+    <script src="app.js"></script>
+
+    <script>
+        // Ensure music plays after user interaction
+        const music = document.getElementById('backgroundMusic');
+
+        // Try to play on page load
+        music.play().catch(() => {
+            // If autoplay is blocked, play on first user interaction
+            document.addEventListener('click', () => {
+                music.play();
+            }, { once: true });
+        });
+    </script>
+</body>
+</html>
