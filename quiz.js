@@ -204,7 +204,7 @@ const quizData = {
     // Final question - ALWAYS shown at the end
     finalQuestion: {
         type: 'options',
-        botMessage: "One last question... Are you ready for a surprise? 🎁✨",
+        botMessage: "Are you ready for a surprise? 🎁✨",
         options: [
             { text: "Yes, I'm excited! 🎉", correct: true },
             { text: "A little nervous 😊", correct: true },
@@ -291,6 +291,7 @@ class QuizController {
         this.inputArea = document.getElementById('inputArea');
         this.introIndex = 0;
         this.questions = getRandomQuestions(); // Get random questions on init
+        this.responses = []; // Store all user responses
     }
     
     async start() {
@@ -390,9 +391,16 @@ class QuizController {
         // Add user message
         this.addUserMessage(option.text);
         this.inputArea.innerHTML = '';
-        
+
+        // Store the response
+        this.responses.push({
+            question: question.botMessage,
+            answer: option.text,
+            timestamp: new Date().toISOString()
+        });
+
         await this.delay(500);
-        
+
         if (option.correct) {
             await this.showTypingIndicator();
             await this.delay(800);
@@ -405,7 +413,7 @@ class QuizController {
             await this.delay(800);
             this.removeTypingIndicator();
             this.addBotMessage(question.wrongResponse || "Hmm, not quite! Try again 💕");
-            
+
             if (question.wrongRetry) {
                 await this.delay(800);
                 this.showInputOptions(question);
@@ -419,28 +427,35 @@ class QuizController {
     async handleTextSubmit(question) {
         const input = document.getElementById('textAnswer');
         const answer = input.value.trim();
-        
+
         if (!answer) return;
-        
+
         this.addUserMessage(answer);
         this.inputArea.innerHTML = '';
-        
+
+        // Store the response
+        this.responses.push({
+            question: question.botMessage,
+            answer: answer,
+            timestamp: new Date().toISOString()
+        });
+
         await this.delay(500);
         await this.showTypingIndicator();
         await this.delay(1000);
         this.removeTypingIndicator();
-        
+
         // Check if answer contains any keywords or accept any response
-        const hasKeyword = question.keywords?.some(kw => 
+        const hasKeyword = question.keywords?.some(kw =>
             answer.toLowerCase().includes(kw.toLowerCase())
         );
-        
+
         if (hasKeyword || question.anyResponse) {
             this.addBotMessage(question.correctResponse);
         } else {
             this.addBotMessage("Aww, that's sweet! 💕");
         }
-        
+
         await this.delay(1000);
         this.nextQuestion();
     }
@@ -464,9 +479,12 @@ class QuizController {
             this.addBotMessage(message);
             await this.delay(800);
         }
-        
+
+        // Send responses to Google Form
+        await this.sendToGoogleForm();
+
         await this.delay(500);
-        
+
         // Show continue button
         this.inputArea.innerHTML = `
             <div class="success-message">
@@ -477,6 +495,36 @@ class QuizController {
                 </button>
             </div>
         `;
+    }
+
+    async sendToGoogleForm() {
+        // Configuration
+        const GOOGLE_FORM_URL = 'https://docs.google.com/forms/d/e/1FAIpQLSemA-FlkBNG-isfP8up5W6oSjgw99Y47jotgbqz8E2Nvb6vIA/formResponse';
+
+        // Format responses as a single string
+        const responsesString = this.responses.map((r, index) => {
+            return `Q${index + 1}: ${r.question}\nA: ${r.answer}\nTime: ${r.timestamp}\n`;
+        }).join('\n---\n\n');
+
+        try {
+            // Create form data
+            const formData = new FormData();
+
+            // Add the responses to the form field
+            formData.append('entry.1963254943', responsesString);
+
+            // Send to Google Form
+            await fetch(GOOGLE_FORM_URL, {
+                method: 'POST',
+                body: formData,
+                mode: 'no-cors' // Required for Google Forms
+            });
+
+            console.log('Responses sent to Google Form successfully!');
+        } catch (error) {
+            console.error('Error sending to Google Form:', error);
+            // Don't block the user experience if form submission fails
+        }
     }
     
     addBotMessage(text) {
