@@ -261,7 +261,7 @@ function showCalendarConfirmation() {
     const btn = document.querySelector('.calendar-btn');
     if (btn) {
         btn.textContent = 'Date Saved! 🎉';
-        btn.style.background = 'linear-gradient(135deg, #4CAF50, #2E7D32)';
+        btn.style.background = 'linear-gradient(135deg, #ff6b9d, #ff4d6d)';
         btn.style.color = 'white';
         btn.disabled = true;
     }
